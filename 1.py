@@ -1467,7 +1467,6 @@ def checkarray(a, b, c, d):  # usually sub function serves the purpose. Only onc
 
 #-----------------
 #---------- keya ----------
-
 ### Lines 1069-1139
 import re
 
@@ -1516,5 +1515,613 @@ def sub(a, b, c, repeat):
         return True
     else:
         return False
+
+#-----------------------
+#--------shannu----------
+
+# /* function to search the occurence of a pattern in any of the member of an array */
+# $text - the array to search for the occurence of pattern
+# $a - pattern in regular expression.
+
+def arr(text, a):
+    global debug
+
+    if debug == 1:
+        print("arr started at ", end="")
+        timestamp()
+
+    for value in text:
+        if re.search(a, value):  # If the regular expression matches the array member
+            count = 1
+            break
+        else:
+            count = 0
+
+    if debug == 1:
+        print("arr ended at ", end="")
+        timestamp()
+
+    return count == 1
+
+#/* function to remove the last n letters from a word in the $text array and replace them with another word */
+def last(a, b, merge):
+    global text  # Bringing text from the global scope
+
+    value2 = []
+
+    for value in text:
+        value1 = []
+
+        for i in range(len(a)):
+            c = a[i].replace("\\", "")
+
+            if re.search(r'(' + a[i] + r')$', value) or re.search(r'(' + c + r')$', value):
+                value1.append(value[:-len(a[i])] + b[i])  # Removing the ending and substituting it
+
+                if merge == 1:
+                    value1.append(value)
+
+            else:
+                value1.append(value)
+
+        # Removing duplicate elements
+        unique_value1 = list(dict.fromkeys(value1))
+
+        if unique_value1 == [value]:
+            value2.append(unique_value1)  # In case there is no change
+
+        elif merge == 1:
+            value2.append(unique_value1)  # In case of optional Adeśa
+
+        else:
+            value2.append([x for x in unique_value1 if x != value])  # Mandatory Adeśa
+
+    text = flatten(value2)
+    text = list(dict.fromkeys(text))  # Keeping only unique members
+
+    return text
+
+#/* function to remove the first n letters from a word in the $text array and replace them with another word */
+def first(a, b, merge):
+    global text
+
+    value2 = []
+
+    for value in text:
+        value1 = []
+
+        for i in range(len(a)):
+            if re.search(r'^[' + a[i] + ']', value):
+                value1.append(b[i] + value[len(a[i]):])  # Replacing the first character(s)
+
+                if merge == 1:
+                    value1.append(value)
+
+            else:
+                value1.append(value)
+
+        # Removing duplicate elements
+        unique_value1 = list(dict.fromkeys(value1))
+
+        if unique_value1 == [value]:
+            value2.append(unique_value1)
+
+        elif merge == 1:
+            value2.append(unique_value1)
+
+        else:
+            value2.append([x for x in unique_value1 if x != value])
+
+    text = flatten(value2)
+    text = list(dict.fromkeys(text))
+
+    return text
+
+
+##/* vriddhi function */
+def vriddhi(a):
+    ac = ["a", "A", "i", "I", "u", "U", "f", "F", "x", "X", "e", "o", "E", "O"]
+
+    acreplace = ["A", "A", "E", "E", "O", "O", "Ar", "Ar", "Al", "Al", "E", "O", "E", "O"]
+
+    out = []
+
+    for value in a:
+        for i in range(len(ac)):
+            value = value.replace(ac[i], acreplace[i])
+
+        out.append(value)  # Replacing vowels with their corresponding vRddhi letters
+
+    return out
+
+##/* guna function */
+def guna(a):
+    ac = ["a", "A", "i", "I", "u", "U", "f", "F", "x", "X", "e", "o", "E", "O"]
+
+    acreplace = ["a", "a", "e", "e", "o", "o", "ar", "ar", "al", "al", "e", "o", "e", "o"]
+
+    out = []
+
+    for value in a:
+        for i in range(len(ac)):
+            value = value.replace(ac[i], acreplace[i])
+
+        out.append(value)  # Replacing vowels with their corresponding guNa letters
+
+    return out
+
+##/* dirgha function */
+def dirgha(a):
+    ac = ["a", "A", "i", "I", "u", "U", "f", "F", "x", "X", "e", "o", "E", "O"]
+
+    acreplace = ["A", "A", "I", "I", "U", "U", "F", "F", "F", "F", "e", "o", "E", "O"]
+
+    out = []
+
+    for value in a:
+        for i in range(len(ac)):
+            value = value.replace(ac[i], acreplace[i])
+
+        out.append(value)  # Replacing vowels with their corresponding dIrgha letters
+
+    return out
+
+#/* anekAca function */
+#// function to test whether the word is ekAc or anekAc i.e. whether there is only one vowel in it or more than one vowel in it.
+def anekAca(a):
+    ac = ["a", "A", "i", "I", "u", "U", "f", "F", "x", "X", "e", "o", "E", "O"]  # Vowel list
+
+    b = re.split("[" + flat(ac) + "]", a)  # Splitting the word by vowels
+
+    if len(b) > 2:  # If there are more than 2 pieces, there is more than one vowel
+        return True
+    else:
+        return False
+
+#/* ends function */
+#// to find if there is any member of array which end in a particular member of another array.
+#// 0 -> doesn't start with but ends with it. 1 -> ends with it or is equal to it. 2 -> is equal to it., 3 -> starts with it but doesn't end with it. 4 -> ends in verb (upasargas don't bother)
+def ends(a, b, n):
+    global debug
+
+    if debug == 1:
+        print("ends", n, "started at ", end="")
+        timestamp()
+
+    upasarga = [
+        "pra", "prati", "api", "parA", "apa", "upa", "pari",
+        "anu", "ava", "vi", "saM", "su", "ati", "ni", "nir",
+        "ut", "aDi", "dur", "aBi", "A"
+    ]
+
+    pattern = [
+        "pari", "pary", "pra", "prA", "pro", "prati", "praty",
+        "api", "apy", "parA", "paro", "apa", "apA", "apo",
+        "upa", "upA", "upo", "anu", "anU", "anv", "ava",
+        "avA", "avo", "vi", "vy", "saM", "sam", "san",
+        "su", "sU", "sv", "ati", "aty", "ni", "ny",
+        "nir", "niH", "nis", "niz", "ut", "ud", "uc",
+        "ul", "aDi", "aDy", "dur", "duH", "dus", "duz",
+        "aBi", "aBy", "A"
+    ]
+
+    can = []
+
+    for aa in a:
+        for bb in b:
+
+            if n == 0:
+                if aa.find(bb) > 0 and aa.endswith(bb):
+                    can.append(1)
+                else:
+                    can.append(0)
+
+            if n == 1:
+                if aa.find(bb) >= 0 and aa.endswith(bb):
+                    can.append(1)
+                else:
+                    can.append(0)
+
+            if n == 2:
+                if aa == bb:
+                    can.append(1)
+                else:
+                    can.append(0)
+
+            if n == 3:
+                if aa.startswith(bb) and not aa.endswith(bb):
+                    can.append(1)
+                else:
+                    can.append(0)
+
+            if n == 4:
+                prat = [0]
+
+                for one in pattern:
+                    for two in pattern:
+
+                        if (
+                            aa.startswith(one)
+                            and (two + bb) in aa
+                            and aa.endswith(bb)
+                        ):
+                            prat.append(1)
+                            break
+
+                if (
+                    (aa.find(bb) > 0 and 1 in prat)
+                    or aa == bb
+                ):
+                    can.append(1)
+                else:
+                    can.append(0)
+
+    if debug == 1:
+        print("ends", n, "ended at ", end="")
+        timestamp()
+
+    if 1 in can:
+        return True
+    else:
+        return False
+
+#/* function Ti to remove the Ti */
+#// $merge 0 - mandatory Adezas, 1 - optional Adezas.
+def Ti(merge):
+    global text
+
+    te1 = r'([' + pc('ac') + r'])([' + pc('hl') + r']*)([+])'
+    te2 = r'\3'  # Keep only "+" and remove the first two members
+
+    val = []
+
+    for value in text:
+        val.append(re.sub(te1, te2, value))  # Removing the first two members
+
+    if merge == 0:  # Mandatory Adeśas
+        text = val
+
+    if merge == 1:  # Optional Adeśas
+        text = text + val
+
+    text = list(dict.fromkeys(text))  # Keeping only unique members
+
+    return text
+
+
+#/* function mit */
+#// $pattern is the pattern to search in the word to add mit pratyaya.
+#// $b is the addition to upadha
+#// $merge 0 is replacement, 1 is optional.
+def mit(pattern, b, merge):
+    global text
+
+    te1 = r'([' + pc('ac') + r'])([' + pc('hl') + r']*)([+])'
+    te2 = r'\1' + b + r'\2\3'  # Adding mit Agama after the last vowel.
+
+    val = []
+
+    for value in text:
+        if re.search(pattern, value):
+            # Executing mit Agama.
+            val.append(re.sub(te1, te2, value))
+        else:
+            val.append(value)
+
+    if merge == 0:
+        text = val
+
+    if merge == 1:
+        text = text + val
+
+    # Removing duplicate elements while preserving order.
+    text = list(dict.fromkeys(text))
+
+    return text
+
+#/* function samprasarana */
+def samprasarana(input, merge):
+    global text, ac, storedata
+
+    yan = ["ya", "va", "ra", "la"]
+    yanik = ["ia", "ua", "fa", "xa"]  # List of samprasAraNa for yaN.
+
+    val1 = []
+
+    for value in input:
+        val1.append(value)
+
+    for i in range(len(val1)):
+        for j in range(len(yan)):
+            val1[i] = val1[i].replace(yan[j], yanik[j])
+
+    if merge == 0:
+        text = one(input, val1, 0)  # Doing samprasAraNa.
+
+    if merge == 1:
+        text = one(input, val1, 1)  # Doing samprasAraNa.
+
+    storedata('1.1.45', 'sa', 0)
+
+    if arr(text, r'[iufx][aAiIuUfFxXeEoO]'):
+        text = two(
+            ["i", "u", "f", "x"],
+            ac,
+            ["i", "u", "f", "x"],
+            blank(len(ac)),
+            2
+        )
+        storedata('6.1.104', 'sa', 0)
+
+    if sub(
+        ["u+uc", "i+ij", "u+up", "u+ud", "u+uh", "u+uS", "u+us"],
+        blank(0),
+        blank(0),
+        0
+    ):
+        text = one(
+            ["u+uc", "i+ij", "u+up", "u+ud", "u+uh", "u+uS", "u+us"],
+            ["Uc", "Ij", "Up", "Ud", "Uh", "US", "us"],
+            0
+        )
+        storedata('6.1.101', 'sa', 0)
+
+    return text
+
+#/* function itcheck */
+#// $a to contain the array of it markers to check.
+#// $b. 0 for it. 1 for itprakriti. 2 for itpratyaya
+def itcheck(a, b):
+    global text, it, itprakriti, itpratyaya
+
+    if b == 0:
+        if len(set(it).intersection(a)) > 0:  # Finds in it.
+            return True
+        else:
+            return False
+
+    if b == 1:
+        if len(set(itprakriti).intersection(a)) > 0:  # Finds in itprakriti.
+            return True
+        else:
+            return False
+
+    if b == 2:
+        if len(set(itpratyaya).intersection(a)) > 0:  # Finds in itpratyaya.
+            return True
+        else:
+            return False
+
+#/* function it (to find an it marker). The function adds the marker to its arrays. */
+#// $pattern is the pattern to look for
+#// $a 0 for finding it in the whole word. 1 for it in prakriti. 2 for it in pratyaya.
+def it(pattern):
+    global text, it, itprakriti, itpratyaya
+
+    for value in text:
+        b = re.split(f"({pattern})", value)
+
+        for i in range(1, (len(b) + 1) // 2):
+            b[i * 2 - 1] = b[i * 2 - 1].replace("!", "")
+            b[i * 2 - 1] = b[i * 2 - 1].replace("+", "")
+
+            it.append(b[i * 2 - 1])
+            it = list(dict.fromkeys(it))
+
+    for value in text:
+        c = value.split("+")
+        b = re.split(f"({pattern})", c[0])
+
+        for i in range(1, (len(b) + 1) // 2):
+            b[i * 2 - 1] = b[i * 2 - 1].replace("!", "")
+            b[i * 2 - 1] = b[i * 2 - 1].replace("+", "")
+
+            itprakriti.append(b[i * 2 - 1])
+            itprakriti = list(dict.fromkeys(itprakriti))
+
+    for value in text:
+        c = value.split("+")
+        new_pattern = pattern.replace("[+]", "^")
+        b = re.split(f"({new_pattern})", c[1])
+
+        for i in range(1, (len(b) + 1) // 2):
+            b[i * 2 - 1] = b[i * 2 - 1].replace("!", "")
+            b[i * 2 - 1] = b[i * 2 - 1].replace("+", "")
+
+            itpratyaya.append(b[i * 2 - 1])
+            itpratyaya = list(dict.fromkeys(itpratyaya))
+
+#/* function to find out it markers when they can occur only in the pratayayas. */
+def itprat(pattern):
+    global text, it, itprakriti, itpratyaya
+
+    for value in text:
+        c = value.split("+")
+        b = re.split(f"({pattern})", c[1])
+
+        for i in range(1, (len(b) + 1) // 2):
+            b[i * 2 - 1] = b[i * 2 - 1].replace("!", "")
+            b[i * 2 - 1] = b[i * 2 - 1].replace("+", "")
+
+            itpratyaya.append(b[i * 2 - 1])
+            itpratyaya = list(dict.fromkeys(itpratyaya))
+
+#/* function antya to do antyAdeza */
+#// $a - array where we want to do antyAdeza. $rep - replacement in place of the last letter.
+def antya(a, rep):
+    value1 = []
+
+    for value in a:
+        value1.append(value[:-1] + rep)
+
+    return value1
+
+#/* adding a specific letter/word at the end of all members of array */
+def addlast(a, b, merge):
+    value1 = []
+
+    for value in a:
+        value1.append(value + b)
+
+    if merge == 0:
+        text = value1
+
+    if merge == 1:
+        text = a + value1
+
+    output = flatten(text)
+    output = list(dict.fromkeys(output))
+
+    return output
+
+#/* function anubandha to remove it markers */
+def anubandha():
+    global text, first, pada, itprakriti, wa1, sarva2, purva
+    global taddhita, sarva, sup, so, al, hl, storedata, ac
+
+    # AdirGiTuDavaH (1.3.5)
+    if (first[:2] in ("Yi", "wu", "qu")) and pada == "pratyaya":
+
+        if first[:2] == "Yi":
+            itprakriti = itprakriti + ["Yi"]
+
+        if first[:2] == "wu":
+            itprakriti = itprakriti + ["wu"]
+
+        if first[:2] == "qu":
+            itprakriti = itprakriti + ["qu"]
+
+        storedata('1.3.5', 'pa', 0)
+
+        text = first_func(
+            ["Yi", "wu", "qu"],
+            ["", "", ""],
+            0
+        )
+
+        storedata('1.3.9', 'sa', 0)
+
+    # cuTU (1.3.7)
+    if arr(text, r'[+][cCjJYwWqQR]'):
+
+        storedata('1.3.7', 'pa', 0)
+
+        text = two(
+            ["+"],
+            ["c", "C", "j", "J", "Y", "w", "W", "q", "Q", "R"],
+            ["+"],
+            blank(10),
+            0
+        )
+
+        text = last(
+            ["jas", "wA"],
+            ["as", "A"],
+            0
+        )
+
+        storedata('1.3.9', 'sa', 0)
+
+    # SaH pratyayasya (1.3.6)
+    if arr(text, r'[+][z]') and pada == "pratyaya":
+
+        it(r'([+][z])')
+
+        storedata('1.3.6', 'pa', 0)
+
+        text = two(
+            ["+"],
+            ["z"],
+            ["+"],
+            [""],
+            0
+        )
+
+        storedata('1.3.9', 'sa', 0)
+
+    # lazakvataddhite (1.3.8)
+    if (
+        (arr(text, r'[+][lSkKgGN]') or sarva2 == 1 or purva == 1)
+        and taddhita == 0
+    ):
+
+        it(r'([+][lSkKgGN])')
+
+        storedata('1.3.8', 'pa', 0)
+
+        text = two(
+            ["+"],
+            ["l", "S", "k", "K", "g", "G", "N"],
+            ["+"],
+            ["", "", "", "", "", "", ""],
+            0
+        )
+
+        storedata('1.3.9', 'sa', 0)
+
+    # Ac + ! (1.3.2)
+    if arr(text, r'[' + flat(ac) + r'][!]'):
+
+        it(r'([' + flat(ac) + r'][!])')
+
+        storedata('1.3.2', 'pa', 0)
+
+        text = two(
+            ac,
+            ["!"],
+            blank(len(ac)),
+            [""],
+            0
+        )
+
+        storedata('1.3.9', 'sa', 0)
+
+    return text
+
+#/* function AdivRddhi to find AdivRddhi */
+def AdivRddhi(a):
+    can = []
+
+    for value in a:
+        b = re.split(r'([aAiIuUfFxXeEoO])', value)
+
+        if b[1] in ["A", "E", "O"]:
+            can.append(1)
+        else:
+            can.append(0)
+
+    if 1 in can:
+        return True
+    else:
+        return False
+
+#------------------------
+#---------cherisha----------
+
+
+
+
+
+
+
+#-------------------------
+#----------keya----------
+
+
+
+
+
+
+
+
+#-----------------------
+#----------shannu----------
+
+
+
+
+
+
+
 
 #-----------------------
